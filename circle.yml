@@ -1,0 +1,6 @@
+# heroku
+deployment:
+  prod:
+    branch: master
+    heroku:
+      appname: prasmalla-todo-api

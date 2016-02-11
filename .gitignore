@@ -12,6 +12,7 @@
 !/log/.keep
 /tmp
 .rspec
+.byebug_history
 
 # Ignore application configuration
 /config/application.yml

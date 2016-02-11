@@ -1,5 +1,5 @@
-class Api::ListsController < ApplicationController
-  skip_before_action :verify_authenticity_token
+class Api::ListsController < ApiController
+  before_action :authenticated?
 
   def index
     user = User.find(params[:user_id])

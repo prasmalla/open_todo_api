@@ -1,6 +1,7 @@
-class Api::ItemsController < ApplicationController
+class Api::ItemsController < ApiController
   skip_before_action :verify_authenticity_token
   before_action :set_list
+  before_action :authenticated?
 
   def index
     items = @list.items.all

@@ -47,3 +47,4 @@ end
 gem 'figaro'
 gem 'puma'
 gem 'bcrypt-ruby'
+gem 'active_model_serializers'

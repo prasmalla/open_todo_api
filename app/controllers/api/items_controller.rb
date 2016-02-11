@@ -2,6 +2,18 @@ class Api::ItemsController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :set_list
 
+  def index
+    items = @list.items.all
+    # render json: items, each_serializer: ItemSerializer
+    render(
+      json: ActiveModel::ArraySerializer.new(
+        items,
+        each_serializer: ItemSerializer,
+        root: 'items',
+      )
+    )
+  end
+
   def create
     item = @list.items.build(item_params)
     if item.save
@@ -39,6 +51,7 @@ private
   def set_list
     @list = List.find(params[:list_id])
   end
+  # curl http://localhost:3000/api/users/1/lists/1/items
   # curl --header "Content-type: application/json" -X POST -d '{"item":{"description":"first to do"}}' http://localhost:3000/api/users/1/lists/1/items
   # curl --header "Content-type: application/json" -X PUT -d '{"item":{"description":"to do"}}' http://localhost:3000/api/users/1/lists/1/items/1
   # curl -X DELETE http://localhost:3000/api/users/1/lists/1/items/1

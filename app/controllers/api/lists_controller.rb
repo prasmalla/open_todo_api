@@ -1,6 +1,19 @@
 class Api::ListsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  def index
+    user = User.find(params[:user_id])
+    lists = user.lists.all
+    # render json: lists, each_serializer: ListSerializer
+    render(
+      json: ActiveModel::ArraySerializer.new(
+        lists,
+        each_serializer: ListSerializer,
+        root: 'lists',
+      )
+    )
+  end
+
   def create
     user = User.find(params[:user_id])
     list = user.lists.build(list_params)
@@ -36,6 +49,7 @@ private
   def list_params
     params.require(:list).permit(:name, :permissions)
   end
+  # curl http://localhost:3000/api/users/1/lists
   # curl --header "Content-type: application/json" -X POST -d '{"list":{"name":"to do", "permissions":"public"}}' http://localhost:3000/api/users/1/lists
   # curl --header "Content-type: application/json" -X PUT -d '{"list":{"permissions":"public"}}' http://localhost:3000/api/users/1/lists/1
   # curl -X DELETE http://localhost:3000/api/users/1/lists/1

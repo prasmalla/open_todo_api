@@ -3,7 +3,14 @@ class Api::UsersController < ApplicationController
 
   def index
     users = User.all
-    render json: users
+    # render json: users, each_serializer: UserSerializer
+    render(
+      json: ActiveModel::ArraySerializer.new(
+        users,
+        each_serializer: UserSerializer,
+        root: 'users',
+      )
+    )
   end
 
   def create

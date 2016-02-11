@@ -12,16 +12,16 @@ class Api::UsersController < ApplicationController
     if user.save
       render json: user, status: 201
     else
-      render json: user.errors, status: 422
+      render json: user.errors.full_messages, status: 422
     end
   end
 
   def destroy
-    user = User.find(params[:id])
-
-    if user.destroy
+    begin
+      user = User.find(params[:id])
+      user.destroy
       render json: {}, status: 204
-    else
+    rescue ActiveRecord::RecordNotFound
       render json: {}, status: 404
     end
   end
@@ -31,6 +31,7 @@ private
   def user_params
     params.require(:user).permit(:email, :username, :password)
   end
+  # curl http://localhost:3000/api/users
   # curl -v -H "Accept: application/json" --header "Content-type: application/json" -X POST -d '{"user":{"email":"api@api.com", "username":"api", "password":"api"}}'  http://localhost:3000/api/users/
-
+  # curl -X DELETE http://localhost:3000/api/users/1/
 end

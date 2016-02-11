@@ -1,9 +1,16 @@
-class Api::UsersController < ApplicationController
-  skip_before_action :verify_authenticity_token
+class Api::UsersController < ApiController
+  before_action :authenticated?, except: [:create]
 
   def index
     users = User.all
-    render json: users
+    # render json: users, each_serializer: UserSerializer
+    render(
+      json: ActiveModel::ArraySerializer.new(
+        users,
+        each_serializer: UserSerializer,
+        root: 'users',
+      )
+    )
   end
 
   def create
@@ -19,8 +26,11 @@ class Api::UsersController < ApplicationController
   def destroy
     begin
       user = User.find(params[:id])
-      user.destroy
-      render json: {}, status: 204
+      if (current_user == user) && user.destroy
+        render json: {}, status: 204
+      else
+        render json: {}, status: 401
+      end
     rescue ActiveRecord::RecordNotFound
       render json: {}, status: 404
     end
@@ -32,6 +42,6 @@ private
     params.require(:user).permit(:email, :username, :password)
   end
   # curl http://localhost:3000/api/users
-  # curl -v -H "Accept: application/json" --header "Content-type: application/json" -X POST -d '{"user":{"email":"api@api.com", "username":"api", "password":"api"}}'  http://localhost:3000/api/users/
+  # curl -v -H "Accept: application/json" --header "Content-type: application/json" -X POST -d '{"user":{"email":"api@api.com", "username":"api", "password":"api"}}' http://localhost:3000/api/users/
   # curl -X DELETE http://localhost:3000/api/users/1/
 end

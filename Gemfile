@@ -46,3 +46,4 @@ end
 
 gem 'figaro'
 gem 'puma'
+gem 'bcrypt-ruby'
